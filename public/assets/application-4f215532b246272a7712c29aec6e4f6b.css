@@ -11,12 +11,14 @@
  * file per style scope.
  *
  */
-
 @font-face {
   font-family: 'Titillium Web';
   font-style: normal;
   font-weight: 400;
-  src: local('Titillium WebLight'), local('TitilliumWeb-Light'), url(http://themes.googleusercontent.com/static/fonts/titilliumweb/v2/anMUvcNT0H1YN4FII8wpr1uKlGE8-OjkUKWan_M3D6s.woff) format('woff');
+  src: local("Titillium WebLight"), local("TitilliumWeb-Light"), url(http://themes.googleusercontent.com/static/fonts/titilliumweb/v2/anMUvcNT0H1YN4FII8wpr1uKlGE8-OjkUKWan_M3D6s.woff) format("woff");
 }
 
-body{ font-family: 'Titillium Web'; }
+/* line 23, /Users/cwebster/nmlc/nmlc/app/assets/stylesheets/application.css.scss */
+body {
+  font-family: 'Titillium Web';
+}
