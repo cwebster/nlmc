@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nmlc</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+	<div class="container theme-showcase">
+		
+        <div class="jumbotron">
+          <h1>NLMC</h1>
+          <p>This is a simple render of the NLMC XML file</p>
+        </div>
+		
+
+<%= yield %>
+
+</div>
+</body>
+</html>

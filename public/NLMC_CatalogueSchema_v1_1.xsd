@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--© Crown Copyright 2013 -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:nlmc="urn:nhs-rcpath-nlmc:v1" targetNamespace="urn:nhs-rcpath-nlmc:v1" elementFormDefault="unqualified" attributeFormDefault="unqualified" version="1.0">
+	<annotation>
+		<documentation>
+		v1.0 - Formal Release for Technology Preview. 
+		v1.1 - "Board Approved - Deprecated" enabled as enumeration for item statuses.
+		</documentation>
+	</annotation>
+	<!-- ROOT ELEMENT -->
+	<element name="NLMC_Catalogue" type="nlmc:NLMC_Catalogue">
+		<annotation>
+			<documentation>Root element of Schema</documentation>
+			<documentation>Uniqueness of NLMC ID's is enforced within the schema</documentation>
+		</annotation>
+		<unique name="NLMC_Test">
+			<selector xpath="NLMC_Test"/>
+			<field xpath="NLMC_ID"/>
+		</unique>
+	</element>
+	<!-- KEY CONSTRUCTS -->
+	<complexType name="NLMC_Catalogue">
+		<sequence>
+			<element name="NLMC_Test" type="nlmc:NLMC_Test" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="catalogueVersion" type="decimal" use="required"/>
+	</complexType>
+	<complexType name="NLMC_Test">
+		<sequence>
+			<element name="NLMC_ID" type="nlmc:NLMC_ID"/>
+			<element name="FullName" type="nlmc:FullName"/>
+			<element name="SNOMEDCT" type="nlmc:SNOMEDCT"/>
+			<element name="CollectedSpecimen" type="nlmc:CollectedSpecimen" maxOccurs="unbounded"/>
+			<element name="NLMC_TestMetaData" type="nlmc:NLMC_TestMetadata"/>
+		</sequence>
+		<!-- Not present in live file 
+			<attribute name="isProfile" type="nlmc:IsMandatory" use="optional"/>
+			<attribute name="isDFT" type="nlmc:IsMandatory" use="optional"/> -->
+	</complexType>
+	<complexType name="ItemChanges">
+		<sequence>
+			<element name="TestDeprecated" type="nlmc:TestDeprecated" nillable="true" minOccurs="0"/>
+			<element name="CollectedSpecimenAdded" type="nlmc:CollectedSpecimenAddedOrRemoved" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="CollectedSpecimenRemoved" type="nlmc:CollectedSpecimenAddedOrRemoved" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="CollectionMethodAdded" type="nlmc:CollectionMethodAddedOrRemoved" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="CollectionMethodRemoved" type="nlmc:CollectionMethodAddedOrRemoved" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="PreconditionAdded" type="nlmc:PreconditionAddedOrRemoved" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="PreconditionRemoved" type="nlmc:PreconditionAddedOrRemoved" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="PreconditionCardinalityAltered" type="nlmc:PreconditionsCardinalityAltered" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="SNOMEDCT_ValuesChanged" type="nlmc:SNOMEDCT_ValuesChanged" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="TopographyCardinalityAltered" type="nlmc:SpecimenRequiredIndicatorCardinalityAltered" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="MorphologyCardinalityAltered" type="nlmc:SpecimenRequiredIndicatorCardinalityAltered" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="changedInRelease" type="decimal" use="required"/>
+	</complexType>
+	<complexType name="SNOMEDCT">
+		<attribute name="Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+		<attribute name="NLMC_RecommendedDescription" type="nlmc:NLMC_RecommendedDescription" use="required"/>
+	</complexType>
+	<complexType name="NLMC_TestMetadata">
+		<sequence>
+			<element name="VersionHistory" type="nlmc:VersionHistory" minOccurs="0"/>
+			<element name="MetaTestNames" type="nlmc:MetaTestNames"/>
+			<element name="Disciplines" type="nlmc:Disciplines"/>
+		</sequence>
+		<attribute name="version" type="decimal" use="required"/>
+		<attribute name="lastModified" type="date" use="required"/>
+		<attribute name="status" type="nlmc:ItemStatus" use="required"/>
+		<attribute name="firstPublishedVersion" type="string" use="required"/>
+		<attribute name="deprecatedInRelease" type="decimal" use="optional"/>
+	</complexType>
+	<!-- SUPPORTING TYPES -->
+	<complexType name="MetaTestNames">
+		<sequence>
+			<element name="AlternateTestName" type="nlmc:AlternateTestName" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="Keywords" type="nlmc:Keywords" minOccurs="0"/>
+		</sequence>
+		<attribute name="displayName" type="nlmc:TestDisplayName" use="required"/>
+	</complexType>
+	<simpleType name="AlternateTestName">
+		<restriction base="string"/>
+	</simpleType>
+	<simpleType name="Keywords">
+		<annotation>
+			<documentation>
+				Keywords listed, seperated by commas
+			</documentation>
+		</annotation>
+		<restriction base="string"/>
+	</simpleType>
+	<complexType name="Disciplines">
+		<annotation>
+			<documentation>
+				This type does not impose a particular discipline category on a deploying site, as each lab is configured differently. It is
+				primarily used by the NLMC content team to manage content delivery.
+			</documentation>
+		</annotation>
+		<sequence>
+			<element name="Discipline" type="nlmc:Discipline" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<complexType name="CollectedSpecimen">
+		<annotation>
+			<documentation>
+				Please note that the following attributes:
+				topographyRequired
+				morphologyRequired
+				
+				each relate to a specific SNOMEDCT subset, to be used when ordering a path test.
+			</documentation>
+		</annotation>
+		<sequence>
+			<element name="Preconditions" type="nlmc:Preconditions" minOccurs="0"/>
+			<element name="CollectionMethod" type="nlmc:CollectionMethod" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="type" type="nlmc:CollectedSpecimensEnum" use="required"/>
+		<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+		<attribute name="topographyRequired" type="nlmc:IsMandatory" use="required"/>
+		<attribute name="morphologyRequired" type="nlmc:IsMandatory" use="required"/>
+	</complexType>
+	<complexType name="CollectionMethod">
+		<attribute name="method" type="nlmc:CollectionMethodsEnums" use="required"/>
+		<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+	</complexType>
+	<complexType name="Discipline">
+		<attribute name="name" type="nlmc:DisciplinesEnum"/>
+	</complexType>
+	<complexType name="VersionHistory">
+		<annotation>
+			<documentation>
+				This item only gets included if a previously released item changes at any time within or for a Major Release, may be for minor
+				 or major changes within the major release..
+			</documentation>
+		</annotation>
+		<sequence>
+			<element name="Changes" type="nlmc:ItemChanges" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<complexType name="SpecimenRequiredIndicatorCardinalityAltered">
+		<attribute name="specimen" type="nlmc:CollectedSpecimensEnum" use="required"/>
+		<attribute name="from" type="nlmc:OptionalOrMandatoryEnum" use="required"/>
+		<attribute name="to" type="nlmc:OptionalOrMandatoryEnum" use="required"/>
+	</complexType>
+	<complexType name="SNOMEDCT_ValuesChanged">
+		<annotation>
+			<documentation>
+				Values for field are: Concept_ID or NLMC_RecommendedDescription
+				From and to fields will be populated with concept ID's or descriptions, as appropriate. 			 
+			</documentation>
+		</annotation>
+		<attribute name="field" type="string" use="required"/>
+		<attribute name="from" type="string" use="required"/>
+		<attribute name="to" type="string" use="required"/>
+	</complexType>
+	<complexType name="PreconditionsCardinalityAltered">
+		<attribute name="reason" type="string" use="optional"/>
+		<attribute name="specimen" type="nlmc:CollectedSpecimensEnum" use="required"/>
+		<attribute name="precondition" type="nlmc:PreconditionsEnum" use="required"/>
+		<attribute name="from" type="nlmc:OptionalOrMandatoryEnum" use="required"/>
+		<attribute name="to" type="nlmc:OptionalOrMandatoryEnum" use="required"/>
+	</complexType>
+	<complexType name="PreconditionAddedOrRemoved">
+		<attribute name="reason" type="string" use="optional"/>
+		<attribute name="specimen" type="nlmc:CollectedSpecimensEnum" use="required"/>
+		<attribute name="precondition" type="nlmc:PreconditionsEnum" use="required"/>
+	</complexType>
+	<complexType name="CollectionMethodAddedOrRemoved">
+		<attribute name="reason" type="string" use="optional"/>
+		<attribute name="specimen" type="nlmc:CollectedSpecimensEnum" use="required"/>
+		<attribute name="method" type="nlmc:CollectionMethodsEnums" use="required"/>
+		<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+	</complexType>
+	<complexType name="CollectedSpecimenAddedOrRemoved">
+		<attribute name="reason" type="string" use="optional"/>
+		<attribute name="specimen" type="nlmc:CollectedSpecimensEnum" use="required"/>
+		<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+	</complexType>
+	<complexType name="TestDeprecated">
+		<attribute name="reason" type="string" use="required"/>
+		<attribute name="alternateTest" type="nlmc:NLMC_ID" use="optional"/>
+		<attribute name="alternate_SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="optional"/>
+	</complexType>
+	<simpleType name="ItemStatus">
+		<restriction base="string">
+			<enumeration value="Board Approved - Active"/>
+			<enumeration value="Board Approved - Deprecated"/>
+			<!-- <enumeration value="Board Approved - Provisional"/> For CFH use only for release 1.-->
+		</restriction>
+	</simpleType>
+	<complexType name="Preconditions">
+		<annotation>
+			<documentation>
+				Note that if a precondition is added to a test - this will not be deemed a major change - unless an entirely new choice group is
+				 added at schema level e.g. PregnantNotPregnant.	
+				 Implementers ahould note however, that in the future, the ability to automatically process brand new precondition groups may become a mandatory implementation rule.				 				
+			</documentation>
+		</annotation>
+		<sequence>
+			<element name="PrePostRandom" type="nlmc:PrePostRandomDose" minOccurs="0"/>
+			<element name="FastingRandom" type="nlmc:FastingRandom" minOccurs="0"/>
+			<element name="ErectSupine" type="nlmc:ErectSupineUnknown" minOccurs="0"/>
+			<element name="RestedAmbulatoryUnknown" type="nlmc:RestedAmbulatoryUnknown" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	<complexType name="ErectSupineUnknown">
+		<sequence>
+			<element name="Choice">
+				<complexType>
+					<sequence>
+						<element name="Erect">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Erect"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Erect"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+						<element name="Supine">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Supine"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Supine"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+						<element name="Unknown">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Unknown position"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Unknown position"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+					</sequence>
+					<attribute name="isMandatory" type="nlmc:IsMandatory" use="required"/>
+					<attribute name="orderDisplayPrompt" type="string" use="required" fixed="Please select required precondition for test"/>
+					<attribute name="sampleTakerDisplayPrompt" type="string" use="required" fixed="Please confirm or amend actual precondition when specimen taken"/>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="RestedAmbulatoryUnknown">
+		<sequence>
+			<element name="Choice">
+				<complexType>
+					<sequence>
+						<element name="Rested">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Patient to lie flat for 30 minutes prior to test, following no significant exercise"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Patient has lain flat for 30 minutes prior to test, following no significant exercise"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+						<element name="Ambulatory">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Ambulatory - Patient to walk at normal pace for 30 minutes prior to test"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Ambulatory - Patient has been walking at normal pace for 30 minutes prior to test"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+						<element name="Unknown">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Unknown - Recent activity levels unknown"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Unknown - Recent activity levels unknown"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+					</sequence>
+					<attribute name="isMandatory" type="nlmc:IsMandatory" use="required"/>
+					<attribute name="orderDisplayPrompt" type="string" use="required" fixed="Please select required precondition for test"/>
+					<attribute name="sampleTakerDisplayPrompt" type="string" use="required" fixed="Please confirm or amend actual precondition when specimen taken"/>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="FastingRandom">
+		<sequence>
+			<element name="Choice">
+				<complexType>
+					<sequence>
+						<element name="Fasting">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Patient to fast for 10 hours prior to test (oral unsweetened black tea, black coffee and water allowed"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Patient has fasted for 10 hours prior to test (oral unsweetened black tea, black coffee and water allowed)"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+						<element name="Random">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Patient may eat and drink prior to the test"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Patient may have eaten or drunk prior to test"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+					</sequence>
+					<attribute name="isMandatory" type="nlmc:IsMandatory" use="required"/>
+					<attribute name="orderDisplayPrompt" type="string" use="required" fixed="Please select required precondition for test"/>
+					<attribute name="sampleTakerDisplayPrompt" type="string" use="required" fixed="Please confirm or amend actual precondition when specimen taken"/>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="PrePostRandomDose">
+		<sequence>
+			<element name="Choice">
+				<complexType>
+					<sequence>
+						<element name="PreDose">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Patient to be due to take drug dose within 30 minutes of sample taking"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Patient is due to take drug dose within 30 minutes of sample taking"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+						<element name="PostDose">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Post dose - according to local protocol"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Post dose - according to local protocol"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+						<element name="Random">
+							<complexType>
+								<complexContent>
+									<restriction base="anyType">
+										<attribute name="SNOMEDCT_Concept_ID" type="nlmc:SNOMEDCT_Concept_ID" use="required"/>
+										<attribute name="orderDisplayText" type="string" use="required" fixed="Random sample - time last dose taken unknown"/>
+										<attribute name="sampleTakerDisplayText" type="string" use="required" fixed="Random sample - time last dose taken unknown"/>
+									</restriction>
+								</complexContent>
+							</complexType>
+						</element>
+					</sequence>
+					<attribute name="isMandatory" type="nlmc:IsMandatory" use="required"/>
+					<attribute name="orderDisplayPrompt" type="string" use="required" fixed="Please select required precondition for test"/>
+					<attribute name="sampleTakerDisplayPrompt" type="string" use="required" fixed="Please confirm or amend actual precondition when specimen taken"/>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+	<simpleType name="NLMC_ID">
+		<annotation>
+			<documentation>
+				The convention is for test request item numbers to be prefixed with NLMC				
+			</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="14"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="FullName">
+		<annotation>
+			<documentation> 
+				This field describes the Fully Specified Name
+				Note that it is not constrained in length in any way
+			</documentation>
+		</annotation>
+		<restriction base="string"/>
+	</simpleType>
+	<simpleType name="SNOMEDCT_Concept_ID">
+		<annotation>
+			<documentation>
+				Note that SnomedCT maximum length is 18 digits.  
+			</documentation>
+		</annotation>
+		<restriction base="string">
+			<pattern value="[0-9]{6,18}"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="NLMC_RecommendedDescription">
+		<restriction base="string"/>
+	</simpleType>
+	<simpleType name="TestDisplayName">
+		<annotation>
+			<documentation>
+				The test display name is designed to facilitate configuration and design of any electronic pathology clinician ordering
+				 system solution. 
+				As a result of this intended use this name type has a character limit. 
+				Note that, as of Jan 2012 the largest test name is 40 characters and every endeavour will continue to be made to not exceed
+				 40 characters. 
+				However, suppliers should note and cater for 60 characters to ensure future proofing of systems.
+			</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="60"/>
+		</restriction>
+	</simpleType>
+	<!-- ENUMERATED TYPES -->
+	<simpleType name="IsMandatory">
+		<restriction base="boolean">
+			<pattern value="true"/>
+			<pattern value="false"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="OptionalOrMandatoryEnum">
+		<restriction base="string">
+			<enumeration value="optional"/>
+			<enumeration value="mandatory"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="PreconditionsEnum">
+		<restriction base="string">
+			<enumeration value="FastingRandom"/>
+			<enumeration value="ErectSupine"/>
+			<enumeration value="RestedAmbulatoryUnknown"/>
+			<enumeration value="PrePostRandom"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="DisciplinesEnum">
+		<restriction base="string">
+			<enumeration value="Immunology"/>
+			<enumeration value="Haematology"/>
+			<enumeration value="Clinical Biochemistry"/>
+			<enumeration value="Blood Transfusion"/>
+			<enumeration value="Histopathology"/>
+			<enumeration value="Cytopathology"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="CollectionMethodsEnums">
+		<restriction base="string">
+			<maxLength value="30"/>
+			<enumeration value="Arterial"/>
+			<enumeration value="Aspiration"/>
+			<enumeration value="Aspiration biopsy"/>
+			<enumeration value="Capillary"/>
+			<enumeration value="Catheter"/>
+			<enumeration value="Clipping"/>
+			<enumeration value="Collected breath"/>
+			<enumeration value="Collected calculus"/>
+			<enumeration value="Collected faeces"/>
+			<enumeration value="Collected fluid"/>
+			<enumeration value="Collected hair"/>
+			<enumeration value="Collected urine"/>
+			<enumeration value="Drain fluid"/>
+			<enumeration value="Endoscopic biopsy"/>
+			<enumeration value="Fine needle aspirate"/>
+			<enumeration value="Excision"/>
+			<enumeration value="Excisional biopsy"/>
+			<enumeration value="Lumbar puncture"/>
+			<enumeration value="Needle biopsy"/>
+			<enumeration value="Punch biopsy"/>
+			<enumeration value="Resection"/>
+			<enumeration value="Scrapings"/>
+			<enumeration value="Smear"/>
+			<enumeration value="Venous"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="CollectedSpecimensEnum">
+		<restriction base="string">
+			<enumeration value="Air"/>
+			<enumeration value="Amniotic fluid"/>
+			<enumeration value="Ascitic fluid"/>
+			<enumeration value="BAL"/>
+			<enumeration value="Bile"/>
+			<enumeration value="Blood"/>
+			<enumeration value="Blood spot"/>
+			<enumeration value="Body fluid"/>
+			<enumeration value="Bone marrow"/>
+			<enumeration value="Breast milk"/>
+			<enumeration value="Breath"/>
+			<enumeration value="Calculus"/>
+			<enumeration value="CSF"/>
+			<enumeration value="Dialysis fluid"/>
+			<enumeration value="ETA"/>
+			<enumeration value="Faeces"/>
+			<enumeration value="Food item"/>
+			<enumeration value="Foreign body"/>
+			<enumeration value="Hair"/>
+			<enumeration value="Medical device"/>
+			<enumeration value="Nail"/>
+			<enumeration value="Pericardial fluid"/>
+			<enumeration value="Pleural fluid"/>
+			<enumeration value="Prosthetic material"/>
+			<enumeration value="Saliva"/>
+			<enumeration value="Semen"/>
+			<enumeration value="Skin"/>
+			<enumeration value="Sputum"/>
+			<enumeration value="Swab"/>
+			<enumeration value="Sweat"/>
+			<enumeration value="Synovial fluid"/>
+			<enumeration value="Tip - central venous catheter (CVC)"/>
+			<enumeration value="Tip - Other"/>
+			<enumeration value="Tissue"/>
+			<enumeration value="Urine"/>
+			<enumeration value="Vitreous fluid"/>
+			<enumeration value="Vomit"/>
+			<enumeration value="Water"/>
+		</restriction>
+	</simpleType>
+</schema>

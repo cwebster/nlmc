@@ -1,0 +1,2 @@
+module NmlcHelper
+end
