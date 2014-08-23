@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= content_for?(:title) ? yield(:title) : "nmlc" %></title>
+    <title>NLMC - <%= yield(:title) || "NLMC" %></title>
     <%= csrf_meta_tags %>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
@@ -17,12 +17,7 @@
     <%= yield(:page_stylesheet) if content_for?(:page_stylesheet) %>
 
   </head>
-  <body>
-	  <div class="container theme-showcase">
-      <div class="jumbotron">
-        <h1>XML Transform of NLMC</h1>
-        <p>This is a simple render of the NLMC</p>
-      </div>
+	<div class="container theme-showcase">
 
 
     <%= yield %>
